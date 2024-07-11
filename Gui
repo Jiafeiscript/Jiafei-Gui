@@ -1,0 +1,129 @@
+-- Create the GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "Jiafeiscript"
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Customize GUI properties
+gui.Enabled = true
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+
+-- Create the frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.2, 0, 0.4, 0)
+frame.Position = UDim2.new(0.35, 0, 0.35, 0) -- Middle of the screen
+frame.BackgroundColor3 = Color3.fromRGB(255, 182, 192) -- Red color
+frame.Parent = gui
+
+-- Create the Jayden.cc label
+local nameLabel = Instance.new("TextLabel")
+nameLabel.Size = UDim2.new(1, 0, 0.1, 0)
+nameLabel.Position = UDim2.new(0, 0, 0, 0)
+nameLabel.BackgroundColor3 = Color3.fromRGB(255, 182, 193) -- Red color
+nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White color for text
+nameLabel.Text = "Jiafeiscript"
+nameLabel.Font = Enum.Font.SourceSansBold
+nameLabel.TextSize = 27
+nameLabel.Parent = frame
+
+-- Make the GUI draggable
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = gui.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+-- Function to toggle camlock
+local function toggleCamlock()
+    camlockEnabled = not camlockEnabled
+    if camlockEnabled then
+        -- Load the script
+        game:GetService("RunService").Heartbeat:Connect(function()
+        for i, Target in pairs(game:GetService("Players"):GetPlayers()) do
+            if Target ~= game:GetService("Players").LocalPlayer then
+                for i, Part in pairs(Target.Character:GetDescendants()) do
+                    if Part:IsA("BasePart") then
+                            Part.Velocity =
+                                Target.Character.Humanoid.MoveDirection * 16
+                            Part.AssemblyLinearVelocity =
+                                Target.Character.Humanoid.MoveDirection * 16
+--[[                    else
+                            Part.Velocity =
+                                Part.Velocity * 0
+                            Part.AssemblyLinearVelocity =
+                                Part.AssemblyLinearVelocity * 0
+                        end]]
+                    end
+                end
+            end
+        end
+    end);
+
+        print("Camlock enabled")
+    else
+        -- Add your camlock disable code here
+        print("Camlock disabled")
+    end
+end
+
+-- Create the Camlock button
+local camlockButton = Instance.new("TextButton")
+camlockButton.Size = UDim2.new(0.5, 0, 0.1, 0)
+camlockButton.Position = UDim2.new(0.25, 0, 0.2, 0)
+camlockButton.BackgroundColor3 = Color3.fromRGB(255, 182, 193) -- Red color
+camlockButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White color for text
+camlockButton.Text = "Resolver 😲🥳"
+camlockButton.Parent = frame
+
+-- Connect the Camlock button to the toggle function
+camlockButton.MouseButton1Click:Connect(toggleCamlock)
+
+-- Create the Close button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+closeButton.Position = UDim2.new(0.8, 0, 0, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 182, 193) -- Red color
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White color for text
+closeButton.Text = "Close 🥰"
+closeButton.Parent = frame
+
+-- Function to close the GUI
+local function closeGUI()
+    gui:Destroy()
+end
+
+-- Connect the Close button to the close function
+closeButton.MouseButton1Click:Connect(closeGUI) 
